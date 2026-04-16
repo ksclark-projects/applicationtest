@@ -1,7 +1,11 @@
+import os
 import platform
 import re
 import subprocess
 import sys
+
+# Root of the project (one level up from tests/)
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def test_python_in_output():
@@ -86,6 +90,28 @@ def test_cpu_flag_usage():
         cwd="/Users/kclark/Development/applicationtest",
     )
     assert "CPU Usage:" in result.stdout
+
+
+def test_disk_flag_exit_code():
+    result = subprocess.run(
+        [sys.executable, "main.py", "--disk"],
+        capture_output=True,
+        text=True,
+        cwd=_PROJECT_ROOT,
+    )
+    assert result.returncode == 0
+
+
+def test_disk_flag_output():
+    result = subprocess.run(
+        [sys.executable, "main.py", "--disk"],
+        capture_output=True,
+        text=True,
+        cwd=_PROJECT_ROOT,
+    )
+    assert "===" in result.stdout or "Disk" in result.stdout
+    assert "Total:" in result.stdout
+    assert "Free:" in result.stdout
 
 
 def test_all_flag():
