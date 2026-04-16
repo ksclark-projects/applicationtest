@@ -24,6 +24,30 @@ def test_version_format():
     assert re.search(r"\d+\.\d+\.\d+", result.stdout)
 
 
+def test_os_flag():
+    result = subprocess.run(
+        [sys.executable, "main.py", "--os"],
+        capture_output=True,
+        text=True,
+        cwd="/Users/kclark/Development/applicationtest",
+    )
+    assert result.returncode == 0
+    os_name = platform.system()
+    assert os_name in result.stdout
+
+
+def test_version_flag():
+    result = subprocess.run(
+        [sys.executable, "main.py", "--version"],
+        capture_output=True,
+        text=True,
+        cwd="/Users/kclark/Development/applicationtest",
+    )
+    assert result.returncode == 0
+    # Output must be only the bare version string (no extra labels)
+    assert re.fullmatch(r"\d+\.\d+\.\d+\n?", result.stdout.strip() + "\n")
+
+
 def test_all_flag():
     result = subprocess.run(
         [sys.executable, "main.py", "--all"],
