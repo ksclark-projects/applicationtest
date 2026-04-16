@@ -2,6 +2,20 @@ import argparse
 import platform
 import sys
 
+try:
+    import psutil
+    HAS_PSUTIL = True
+except ImportError:
+    HAS_PSUTIL = False
+
+
+def get_cpu_info():
+    return {
+        "cores": psutil.cpu_count(logical=True),
+        "architecture": platform.machine(),
+        "usage_percent": psutil.cpu_percent(interval=None),
+    }
+
 
 def main():
     try:
@@ -19,6 +33,7 @@ def main():
     parser.add_argument('--version', action='store_true', help='Print the Python version number and exit')
     parser.add_argument('--all', action='store_true', help='Display full Python environment info')
     parser.add_argument('--os', action='store_true', help='Print OS name, version, and release')
+    parser.add_argument('--cpu', action='store_true', help='Display CPU cores, architecture, and usage')
     args = parser.parse_args()
 
     major = sys.version_info.major
@@ -33,6 +48,14 @@ def main():
         print(f"{CYAN}OS name:{WHITE} {platform.system()}")
         print(f"{CYAN}OS release:{WHITE} {platform.release()}")
         print(f"{CYAN}OS version:{WHITE} {platform.version()}")
+        sys.exit(0)
+
+    if args.cpu:
+        info = get_cpu_info()
+        print("=== CPU ===")
+        print(f"{CYAN}CPU Cores:{WHITE} {info['cores']}")
+        print(f"{CYAN}Architecture:{WHITE} {info['architecture']}")
+        print(f"{CYAN}CPU Usage:{WHITE} {info['usage_percent']}%")
         sys.exit(0)
 
     if getattr(args, 'all'):
