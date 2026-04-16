@@ -17,6 +17,15 @@ def get_cpu_info():
     }
 
 
+def get_memory_info():
+    mem = psutil.virtual_memory()
+    return {
+        "total": round(mem.total / (1024 ** 3), 1),
+        "used": round(mem.used / (1024 ** 3), 1),
+        "available": round(mem.available / (1024 ** 3), 1),
+    }
+
+
 def main():
     try:
         from colorama import Fore, Style, init
@@ -34,6 +43,7 @@ def main():
     parser.add_argument('--all', action='store_true', help='Display full Python environment info')
     parser.add_argument('--os', action='store_true', help='Print OS name, version, and release')
     parser.add_argument('--cpu', action='store_true', help='Display CPU cores, architecture, and usage')
+    parser.add_argument('--memory', action='store_true', help='Display total, used, and available RAM')
     args = parser.parse_args()
 
     major = sys.version_info.major
@@ -58,6 +68,14 @@ def main():
         print(f"{CYAN}CPU Usage:{WHITE} {info['usage_percent']}%")
         sys.exit(0)
 
+    if args.memory:
+        info = get_memory_info()
+        print("=== Memory ===")
+        print(f"{CYAN}Memory Total:{WHITE} {info['total']} GB")
+        print(f"{CYAN}Memory Used:{WHITE} {info['used']} GB")
+        print(f"{CYAN}Memory Available:{WHITE} {info['available']} GB")
+        sys.exit(0)
+
     if getattr(args, 'all'):
         print(f"{CYAN}Python version:{WHITE} {major}.{minor}.{micro}")
         print(f"{CYAN}Version info:{WHITE} {sys.version_info}")
@@ -67,7 +85,13 @@ def main():
         print(f"{CYAN}OS version:{WHITE} {platform.version()}")
         sys.exit(0)
 
+    # Default: print Python version and memory section
     print(f"Python {major}.{minor}.{micro}")
+    mem_info = get_memory_info()
+    print("=== Memory ===")
+    print(f"{CYAN}Memory Total:{WHITE} {mem_info['total']} GB")
+    print(f"{CYAN}Memory Used:{WHITE} {mem_info['used']} GB")
+    print(f"{CYAN}Memory Available:{WHITE} {mem_info['available']} GB")
 
 
 if __name__ == "__main__":
