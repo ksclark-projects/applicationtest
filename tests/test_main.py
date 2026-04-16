@@ -48,6 +48,46 @@ def test_version_flag():
     assert re.fullmatch(r"\d+\.\d+\.\d+\n?", result.stdout.strip() + "\n")
 
 
+def test_cpu_flag_exit_code():
+    result = subprocess.run(
+        [sys.executable, "main.py", "--cpu"],
+        capture_output=True,
+        text=True,
+        cwd="/Users/kclark/Development/applicationtest",
+    )
+    assert result.returncode == 0
+
+
+def test_cpu_flag_contains_cpu_cores():
+    result = subprocess.run(
+        [sys.executable, "main.py", "--cpu"],
+        capture_output=True,
+        text=True,
+        cwd="/Users/kclark/Development/applicationtest",
+    )
+    assert "CPU Cores:" in result.stdout
+
+
+def test_cpu_flag_contains_architecture():
+    result = subprocess.run(
+        [sys.executable, "main.py", "--cpu"],
+        capture_output=True,
+        text=True,
+        cwd="/Users/kclark/Development/applicationtest",
+    )
+    assert "Architecture:" in result.stdout
+
+
+def test_cpu_flag_contains_cpu_usage():
+    result = subprocess.run(
+        [sys.executable, "main.py", "--cpu"],
+        capture_output=True,
+        text=True,
+        cwd="/Users/kclark/Development/applicationtest",
+    )
+    assert "CPU Usage:" in result.stdout
+
+
 def test_all_flag():
     result = subprocess.run(
         [sys.executable, "main.py", "--all"],

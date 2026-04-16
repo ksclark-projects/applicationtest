@@ -3,6 +3,15 @@ import platform
 import sys
 
 
+def get_cpu_info():
+    import psutil
+    return {
+        "cpu_cores": psutil.cpu_count(logical=True),
+        "architecture": platform.machine(),
+        "cpu_usage": psutil.cpu_percent(interval=None),
+    }
+
+
 def main():
     try:
         from colorama import Fore, Style, init
@@ -19,6 +28,7 @@ def main():
     parser.add_argument('--version', action='store_true', help='Print the Python version number and exit')
     parser.add_argument('--all', action='store_true', help='Display full Python environment info')
     parser.add_argument('--os', action='store_true', help='Print OS name, version, and release')
+    parser.add_argument('--cpu', action='store_true', help='Print CPU information and exit')
     args = parser.parse_args()
 
     major = sys.version_info.major
@@ -33,6 +43,14 @@ def main():
         print(f"{CYAN}OS name:{WHITE} {platform.system()}")
         print(f"{CYAN}OS release:{WHITE} {platform.release()}")
         print(f"{CYAN}OS version:{WHITE} {platform.version()}")
+        sys.exit(0)
+
+    if args.cpu:
+        cpu = get_cpu_info()
+        print("=== CPU ===")
+        print(f"{CYAN}CPU Cores:{WHITE} {cpu['cpu_cores']}")
+        print(f"{CYAN}Architecture:{WHITE} {cpu['architecture']}")
+        print(f"{CYAN}CPU Usage:{WHITE} {cpu['cpu_usage']}%")
         sys.exit(0)
 
     if getattr(args, 'all'):
