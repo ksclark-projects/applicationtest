@@ -17,6 +17,57 @@ def get_cpu_info():
     }
 
 
+def get_memory_info():
+    mem = psutil.virtual_memory()
+    return {
+        "total_gb": round(mem.total / (1024 ** 3), 2),
+        "used_gb": round(mem.used / (1024 ** 3), 2),
+        "available_gb": round(mem.available / (1024 ** 3), 2),
+    }
+
+
+def get_disk_info():
+    partitions = []
+    for part in psutil.disk_partitions(all=False):
+        try:
+            usage = psutil.disk_usage(part.mountpoint)
+            partitions.append({
+                "mountpoint": part.mountpoint,
+                "total_gb": round(usage.total / (1024 ** 3), 2),
+                "used_gb": round(usage.used / (1024 ** 3), 2),
+                "free_gb": round(usage.free / (1024 ** 3), 2),
+            })
+        except PermissionError:
+            continue
+    return partitions
+
+
+def print_cpu_section(CYAN, WHITE):
+    info = get_cpu_info()
+    print("=== CPU ===")
+    print(f"{CYAN}CPU Cores:{WHITE} {info['cores']}")
+    print(f"{CYAN}Architecture:{WHITE} {info['architecture']}")
+    print(f"{CYAN}CPU Usage:{WHITE} {info['usage_percent']}%")
+
+
+def print_memory_section(CYAN, WHITE):
+    info = get_memory_info()
+    print("=== Memory ===")
+    print(f"{CYAN}Memory Total:{WHITE} {info['total_gb']} GB")
+    print(f"{CYAN}Memory Used:{WHITE} {info['used_gb']} GB")
+    print(f"{CYAN}Memory Available:{WHITE} {info['available_gb']} GB")
+
+
+def print_disk_section(CYAN, WHITE):
+    partitions = get_disk_info()
+    print("=== Disk ===")
+    for p in partitions:
+        print(f"{CYAN}Mount:{WHITE} {p['mountpoint']}  "
+              f"{CYAN}Total:{WHITE} {p['total_gb']} GB  "
+              f"{CYAN}Used:{WHITE} {p['used_gb']} GB  "
+              f"{CYAN}Free:{WHITE} {p['free_gb']} GB")
+
+
 def main():
     try:
         from colorama import Fore, Style, init
@@ -34,6 +85,8 @@ def main():
     parser.add_argument('--all', action='store_true', help='Display full Python environment info')
     parser.add_argument('--os', action='store_true', help='Print OS name, version, and release')
     parser.add_argument('--cpu', action='store_true', help='Display CPU cores, architecture, and usage')
+    parser.add_argument('--memory', action='store_true', help='Display memory total, used, and available')
+    parser.add_argument('--disk', action='store_true', help='Display disk partition info')
     args = parser.parse_args()
 
     major = sys.version_info.major
@@ -51,11 +104,15 @@ def main():
         sys.exit(0)
 
     if args.cpu:
-        info = get_cpu_info()
-        print("=== CPU ===")
-        print(f"{CYAN}CPU Cores:{WHITE} {info['cores']}")
-        print(f"{CYAN}Architecture:{WHITE} {info['architecture']}")
-        print(f"{CYAN}CPU Usage:{WHITE} {info['usage_percent']}%")
+        print_cpu_section(CYAN, WHITE)
+        sys.exit(0)
+
+    if args.memory:
+        print_memory_section(CYAN, WHITE)
+        sys.exit(0)
+
+    if args.disk:
+        print_disk_section(CYAN, WHITE)
         sys.exit(0)
 
     if getattr(args, 'all'):
@@ -65,9 +122,16 @@ def main():
         print(f"{CYAN}OS name:{WHITE} {platform.system()}")
         print(f"{CYAN}OS release:{WHITE} {platform.release()}")
         print(f"{CYAN}OS version:{WHITE} {platform.version()}")
+        print_cpu_section(CYAN, WHITE)
+        print_memory_section(CYAN, WHITE)
+        print_disk_section(CYAN, WHITE)
         sys.exit(0)
 
+    # Default: show all categories
     print(f"Python {major}.{minor}.{micro}")
+    print_cpu_section(CYAN, WHITE)
+    print_memory_section(CYAN, WHITE)
+    print_disk_section(CYAN, WHITE)
 
 
 if __name__ == "__main__":
