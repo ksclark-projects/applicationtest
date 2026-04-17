@@ -21,8 +21,8 @@ def get_memory_info():
     mem = psutil.virtual_memory()
     return {
         "total_gb": round(mem.total / (1024 ** 3), 2),
+        "used_gb": round(mem.used / (1024 ** 3), 2),
         "available_gb": round(mem.available / (1024 ** 3), 2),
-        "used_percent": mem.percent,
     }
 
 
@@ -72,11 +72,15 @@ def main():
         sys.exit(0)
 
     if args.cpu:
-        info = get_cpu_info()
-        print("=== CPU ===")
-        print(f"{CYAN}CPU Cores:{WHITE} {info['cores']}")
-        print(f"{CYAN}Architecture:{WHITE} {info['architecture']}")
-        print(f"{CYAN}CPU Usage:{WHITE} {info['usage_percent']}%")
+        print_cpu_section(CYAN, WHITE)
+        sys.exit(0)
+
+    if args.memory:
+        print_memory_section(CYAN, WHITE)
+        sys.exit(0)
+
+    if args.disk:
+        print_disk_section(CYAN, WHITE)
         sys.exit(0)
 
     if args.memory:
@@ -103,10 +107,16 @@ def main():
         print(f"{CYAN}OS name:{WHITE} {platform.system()}")
         print(f"{CYAN}OS release:{WHITE} {platform.release()}")
         print(f"{CYAN}OS version:{WHITE} {platform.version()}")
+        print_cpu_section(CYAN, WHITE)
+        print_memory_section(CYAN, WHITE)
+        print_disk_section(CYAN, WHITE)
         sys.exit(0)
 
     # Default: no flags — show all categories
     print(f"Python {major}.{minor}.{micro}")
+    print_cpu_section(CYAN, WHITE)
+    print_memory_section(CYAN, WHITE)
+    print_disk_section(CYAN, WHITE)
 
     print("=== CPU ===")
     cpu = get_cpu_info()
