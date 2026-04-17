@@ -3,7 +3,7 @@ import re
 import subprocess
 import sys
 
-MAIN_CWD = "/Users/kclark/Development/applicationtest.outworked-worktrees/us-004-default-no-flags-shows-all-categories-mo26b55w"
+MAIN_CWD = "/Users/kclark/Development/applicationtest"
 
 
 def run_main(*args):
