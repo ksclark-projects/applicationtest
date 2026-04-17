@@ -36,6 +36,32 @@ def get_disk_info():
     }
 
 
+def print_cpu_section(CYAN, WHITE):
+    print("=== CPU ===")
+    cpu = get_cpu_info()
+    print(f"{CYAN}CPU Cores:{WHITE} {cpu['cores']}")
+    print(f"{CYAN}Architecture:{WHITE} {cpu['architecture']}")
+    print(f"{CYAN}CPU Usage:{WHITE} {cpu['usage_percent']}%")
+
+
+def print_memory_section(CYAN, WHITE):
+    print("=== Memory ===")
+    mem = get_memory_info()
+    print(f"{CYAN}Memory Total:{WHITE} {mem['total_gb']} GB")
+    print(f"{CYAN}Total:{WHITE} {mem['total_gb']} GB")
+    print(f"{CYAN}Available:{WHITE} {mem['available_gb']} GB")
+    print(f"{CYAN}Used:{WHITE} {mem['used_gb']} GB")
+
+
+def print_disk_section(CYAN, WHITE):
+    print("=== Disk ===")
+    disk = get_disk_info()
+    print(f"{CYAN}Mount:{WHITE} /")
+    print(f"{CYAN}Total:{WHITE} {disk['total_gb']} GB")
+    print(f"{CYAN}Used:{WHITE} {disk['used_gb']} GB")
+    print(f"{CYAN}Free:{WHITE} {disk['free_gb']} GB")
+
+
 def main():
     try:
         from colorama import Fore, Style, init
@@ -83,23 +109,6 @@ def main():
         print_disk_section(CYAN, WHITE)
         sys.exit(0)
 
-    if args.memory:
-        info = get_memory_info()
-        print("=== Memory ===")
-        print(f"{CYAN}Total:{WHITE} {info['total_gb']} GB")
-        print(f"{CYAN}Available:{WHITE} {info['available_gb']} GB")
-        print(f"{CYAN}Used:{WHITE} {info['used_percent']}%")
-        sys.exit(0)
-
-    if args.disk:
-        info = get_disk_info()
-        print("=== Disk ===")
-        print(f"{CYAN}Total:{WHITE} {info['total_gb']} GB")
-        print(f"{CYAN}Used:{WHITE} {info['used_gb']} GB")
-        print(f"{CYAN}Free:{WHITE} {info['free_gb']} GB")
-        print(f"{CYAN}Used:{WHITE} {info['used_percent']}%")
-        sys.exit(0)
-
     if getattr(args, 'all'):
         print(f"{CYAN}Python version:{WHITE} {major}.{minor}.{micro}")
         print(f"{CYAN}Version info:{WHITE} {sys.version_info}")
@@ -117,25 +126,6 @@ def main():
     print_cpu_section(CYAN, WHITE)
     print_memory_section(CYAN, WHITE)
     print_disk_section(CYAN, WHITE)
-
-    print("=== CPU ===")
-    cpu = get_cpu_info()
-    print(f"{CYAN}CPU Cores:{WHITE} {cpu['cores']}")
-    print(f"{CYAN}Architecture:{WHITE} {cpu['architecture']}")
-    print(f"{CYAN}CPU Usage:{WHITE} {cpu['usage_percent']}%")
-
-    print("=== Memory ===")
-    mem = get_memory_info()
-    print(f"{CYAN}Total:{WHITE} {mem['total_gb']} GB")
-    print(f"{CYAN}Available:{WHITE} {mem['available_gb']} GB")
-    print(f"{CYAN}Used:{WHITE} {mem['used_percent']}%")
-
-    print("=== Disk ===")
-    disk = get_disk_info()
-    print(f"{CYAN}Total:{WHITE} {disk['total_gb']} GB")
-    print(f"{CYAN}Used:{WHITE} {disk['used_gb']} GB")
-    print(f"{CYAN}Free:{WHITE} {disk['free_gb']} GB")
-    print(f"{CYAN}Used:{WHITE} {disk['used_percent']}%")
 
 
 if __name__ == "__main__":
