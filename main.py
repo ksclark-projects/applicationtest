@@ -109,23 +109,6 @@ def main():
         print_disk_section(CYAN, WHITE)
         sys.exit(0)
 
-    if args.memory:
-        info = get_memory_info()
-        print("=== Memory ===")
-        print(f"{CYAN}Total:{WHITE} {info['total_gb']} GB")
-        print(f"{CYAN}Available:{WHITE} {info['available_gb']} GB")
-        print(f"{CYAN}Used:{WHITE} {info['used_percent']}%")
-        sys.exit(0)
-
-    if args.disk:
-        info = get_disk_info()
-        print("=== Disk ===")
-        print(f"{CYAN}Total:{WHITE} {info['total_gb']} GB")
-        print(f"{CYAN}Used:{WHITE} {info['used_gb']} GB")
-        print(f"{CYAN}Free:{WHITE} {info['free_gb']} GB")
-        print(f"{CYAN}Used:{WHITE} {info['used_percent']}%")
-        sys.exit(0)
-
     if getattr(args, 'all'):
         print(f"{CYAN}Python version:{WHITE} {major}.{minor}.{micro}")
         print(f"{CYAN}Version info:{WHITE} {sys.version_info}")
